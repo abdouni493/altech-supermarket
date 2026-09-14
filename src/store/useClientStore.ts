@@ -55,6 +55,6 @@ export const useClientStore = create<ClientState>()(
         }
       },
     }),
-    { name: 'cosmetics-clients' },
+    { name: 'suppirette-clients-v2' },
   ),
 )

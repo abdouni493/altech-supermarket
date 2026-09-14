@@ -4,79 +4,107 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Cosmetics palette — violet · fuchsia · pink · lilac with rose-gold accent.
-        // (Token group kept as "wood" so existing utility classes recolor app-wide.)
+        // --------------------------------------------------------------------
+        // Supermarket retail palette — navy structure · blue action · green money.
+        // Token group is still named "wood" so every existing utility class in the
+        // app recolours from here; the semantics below are what matter:
+        //
+        //   wood-dark    navy    chrome: sidebar, headers, headings
+        //   wood-medium  slate   secondary / muted body text
+        //   wood-warm    blue    the primary brand action colour
+        //   wood-light   slate   borders and hairlines
+        //   wood-cream   slate   subtle surfaces, table stripes
+        //   gold         amber   partial payment / warning
+        //   sage         green   paid / success / income
+        //   terracotta   red     unpaid / danger / debt
+        //
+        // Every text colour below clears WCAG AA (4.5:1) on a white surface.
+        // --------------------------------------------------------------------
         wood: {
-          dark: '#3B0764', // deep violet — headings / sidebar top
-          medium: '#9333C4', // purple-mauve (muted text, readable)
-          warm: '#C026D3', // signature fuchsia (primary)
-          light: '#E879F9', // soft pink-purple
-          blonde: '#F5C2F1', // light blush lilac
-          cream: '#FAEAFB', // lavender blush cream
-          white: '#FDF6FE', // pearl lilac
+          dark: '#0F172A', // slate-900 — 16.7:1 on white
+          medium: '#475569', // slate-600 — 7.4:1 on white
+          warm: '#0369A1', // sky-700  — 5.6:1 on white (primary)
+          light: '#94A3B8', // slate-400 — borders / hairlines
+          blonde: '#CBD5E1', // slate-300 — muted text on navy
+          cream: '#F1F5F9', // slate-100 — subtle surface
+          white: '#F8FAFC', // slate-50
         },
         gold: {
-          DEFAULT: '#C9789A', // rose-gold accent
-          light: '#F0B6D8',
+          DEFAULT: '#B45309', // amber-700 — 5.0:1 on white (partial / warning)
+          light: '#F59E0B', // amber-500 — accent only, never text on white
         },
-        sage: '#3F9E84', // fresh emerald — success / sale price / paid
-        terracotta: '#E24A6A', // rose-red — danger / debt / alerts
-        charcoal: '#2A1140', // near-black violet — body text
+        sage: '#15803D', // green-700 — 4.9:1 on white (paid / success)
+        terracotta: '#DC2626', // red-600  — 4.8:1 on white (unpaid / danger)
+        charcoal: '#0F172A', // body text
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
+        // Retail dashboards read better in one clean grotesk than in a display
+        // serif; the mono face carries tabular figures for money columns.
+        display: ['Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'Cairo', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
         arabic: ['Cairo', 'sans-serif'],
       },
       backgroundImage: {
-        'wood-sidebar': 'linear-gradient(180deg, #2E0A57 0%, #6D28D9 52%, #DB2777 100%)',
-        'wood-header': 'linear-gradient(135deg, #7E22CE 0%, #DB2777 100%)',
-        'wood-btn': 'linear-gradient(135deg, #9333EA 0%, #DB2777 100%)',
-        'wood-bg': 'linear-gradient(135deg, #FDF6FE 0%, #FAEAFB 60%, #FCE7F3 100%)',
-        'wood-card': 'linear-gradient(145deg, #FFFFFF 0%, #FDF6FE 100%)',
-        'gold-shine': 'linear-gradient(135deg, #C9789A 0%, #F0B6D8 100%)',
-        'rose-shine': 'linear-gradient(135deg, #9333EA 0%, #C026D3 50%, #DB2777 100%)',
+        'wood-sidebar': 'linear-gradient(180deg, #0F172A 0%, #14243D 55%, #0C4A6E 100%)',
+        'wood-header': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+        'wood-btn': 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+        'wood-bg': 'linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)',
+        'wood-card': 'linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%)',
+        'gold-shine': 'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)',
+        'rose-shine': 'linear-gradient(135deg, #0369A1 0%, #0284C7 55%, #0EA5E9 100%)',
       },
       boxShadow: {
-        wood: '0 4px 20px rgba(59, 7, 100, 0.12)',
-        'wood-lg': '0 12px 40px rgba(59, 7, 100, 0.20)',
-        'wood-inset': 'inset 0 1px 0 rgba(255,255,255,0.6)',
-        gold: '0 4px 16px rgba(201, 120, 154, 0.35)',
-        rose: '0 6px 20px rgba(192, 38, 211, 0.32)',
+        // One elevation scale, navy-tinted so shadows sit in the palette.
+        wood: '0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.06)',
+        'wood-lg': '0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06)',
+        'wood-inset': 'inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+        gold: '0 2px 10px rgba(180, 83, 9, 0.28)',
+        rose: '0 4px 14px rgba(3, 105, 161, 0.26)',
       },
       borderColor: {
-        woodborder: 'rgba(232, 121, 249, 0.25)',
+        woodborder: 'rgba(148, 163, 184, 0.35)',
       },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        // Retained under their original names so existing classes keep working,
+        // but retuned to be calm enough for an interface people stare at all day.
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-8px)' },
+          '50%': { transform: 'translateY(-4px)' },
         },
         bloom: {
-          '0%': { transform: 'scale(0.96)', opacity: '0.7' },
-          '50%': { transform: 'scale(1.02)', opacity: '1' },
-          '100%': { transform: 'scale(0.96)', opacity: '0.7' },
+          '0%, 100%': { opacity: '0.85' },
+          '50%': { opacity: '1' },
         },
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(226, 74, 106, 0.45)' },
-          '50%': { boxShadow: '0 0 0 6px rgba(226, 74, 106, 0)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(220, 38, 38, 0.35)' },
+          '50%': { boxShadow: '0 0 0 5px rgba(220, 38, 38, 0)' },
         },
         gradientShift: {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
         },
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'none' },
+        },
       },
       animation: {
-        shimmer: 'shimmer 2.5s linear infinite',
-        float: 'float 6s ease-in-out infinite',
+        shimmer: 'shimmer 1.8s linear infinite',
+        float: 'float 7s ease-in-out infinite',
         bloom: 'bloom 4s ease-in-out infinite',
-        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
-        'gradient-shift': 'gradientShift 8s ease infinite',
+        'pulse-glow': 'pulseGlow 2.2s ease-out infinite',
+        'gradient-shift': 'gradientShift 10s ease infinite',
+        'fade-up': 'fadeUp 240ms cubic-bezier(0.22, 1, 0.36, 1) both',
+      },
+      transitionTimingFunction: {
+        // Shared easing tokens: ease-out for entrances, a soft spring for emphasis.
+        entrance: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        exit: 'cubic-bezier(0.4, 0, 1, 1)',
       },
     },
   },

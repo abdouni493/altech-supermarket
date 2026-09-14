@@ -133,10 +133,10 @@ export const Header = () => {
                                 {isExpired ? (
                                   <CalendarX size={16} className="shrink-0 text-terracotta" />
                                 ) : (
-                                  <CalendarClock size={16} className="shrink-0 text-[#8a6420]" />
+                                  <CalendarClock size={16} className="shrink-0 text-[#B45309]" />
                                 )}
                                 <span className="flex-1 truncate text-xs font-medium text-wood-dark">{product.name}</span>
-                                <span className={`text-xs font-bold ${isExpired ? 'text-terracotta' : 'text-[#8a6420]'}`}>
+                                <span className={`text-xs font-bold ${isExpired ? 'text-terracotta' : 'text-[#B45309]'}`}>
                                   {info.days === 0
                                     ? t('expiresToday')
                                     : isExpired

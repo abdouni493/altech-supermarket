@@ -135,6 +135,6 @@ export const useProductStore = create<ProductState>()(
       addCategory: (name) =>
         set((s) => (s.categories.includes(name) ? s : { categories: [...s.categories, name] })),
     }),
-    { name: 'cosmetics-products' },
+    { name: 'suppirette-products-v2' },
   ),
 )

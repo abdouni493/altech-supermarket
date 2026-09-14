@@ -1,6 +1,17 @@
+/**
+ * Backend base URL. When VITE_API_URL is unset the app runs standalone on its
+ * seeded local data (this is how the hosted demo works), so callers should check
+ * `apiEnabled` before syncing rather than firing requests that can only fail.
+ */
 const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api'
 
+export const apiEnabled = Boolean(import.meta.env.VITE_API_URL)
+
 async function request(path: string, opts?: RequestInit) {
+  // Standalone mode: resolve as a no-op so callers still apply their local state
+  // update instead of treating an unreachable backend as a failed write.
+  if (!apiEnabled) return null
+
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...opts,

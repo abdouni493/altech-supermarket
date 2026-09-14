@@ -35,7 +35,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
     >
       {/* Brand */}
       <div className="flex items-center gap-3 px-4 py-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-shine bg-[length:200%_200%] text-white shadow-rose animate-gradient-shift">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-shine text-white shadow-rose">
           <ShoppingCart size={24} />
         </div>
         <AnimatePresence>
@@ -68,7 +68,8 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           <NavLink key={item.key} to={item.path} title={collapsed ? t(item.labelKey) : undefined}>
             {({ isActive }) => (
               <motion.div
-                whileHover={{ x: isRTL ? -6 : 6 }}
+                whileHover={{ x: isRTL ? -3 : 3 }}
+                transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className={clsx(
                   'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
                   isActive
@@ -79,7 +80,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                 {isActive && (
                   <motion.span
                     layoutId="activeBar"
-                    className="absolute inset-y-1.5 start-0 w-1 rounded-full bg-gradient-to-b from-wood-light to-pink-300"
+                    className="absolute inset-y-1.5 start-0 w-1 rounded-full bg-sky-400"
                   />
                 )}
                 <item.icon size={20} style={{ color: item.color }} className="shrink-0" />
@@ -99,7 +100,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
                   )}
                 </AnimatePresence>
                 {isActive && !collapsed && (
-                  <motion.div layoutId="activeDot" className="ms-auto h-2 w-2 rounded-full bg-gold-light" />
+                  <motion.div layoutId="activeDot" className="ms-auto h-2 w-2 rounded-full bg-sky-400" />
                 )}
               </motion.div>
             )}
@@ -110,7 +111,8 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
       {/* Logout */}
       <div className="border-t border-white/10 p-3">
         <motion.button
-          whileHover={{ x: isRTL ? -6 : 6 }}
+          whileHover={{ x: isRTL ? -3 : 3 }}
+                transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
           onClick={handleLogout}
           title={collapsed ? t('logout') : undefined}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-wood-cream/90 transition hover:bg-terracotta/30"

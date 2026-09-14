@@ -23,7 +23,7 @@ export const Barcode = ({ value, width = 2, height = 60, displayValue = true }: 
           fontSize: 14,
           margin: 6,
           background: '#ffffff',
-          lineColor: '#2C2218',
+          lineColor: '#0F172A',
         })
       } catch {
         // fallback to CODE128 for any invalid EAN

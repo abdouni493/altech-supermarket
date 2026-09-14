@@ -26,7 +26,7 @@ export const Login = () => {
   const users = useAuthStore((s) => s.users)
   const [showCreate, setShowCreate] = useState(false)
 
-  const canCreateAdmin = users.length === 0
+  const canCreateAdmin = users.filter((u) => !u.isDemo).length === 0
 
   const {
     register,
@@ -45,8 +45,8 @@ export const Login = () => {
   }
 
   const onDemo = () => {
-    loginDemo()
-    toast.success(`${t('welcomeBack')}, Admin Démo`)
+    const user = loginDemo()
+    toast.success(`${t('welcomeBack')}, ${user.fullName}`)
     navigate('/dashboard')
   }
 
@@ -79,8 +79,8 @@ export const Login = () => {
   return (
     <div className="wood-grain relative flex min-h-screen items-center justify-center overflow-hidden bg-wood-sidebar p-4">
       {/* decorative blobs */}
-      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-gold/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-wood-light/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-400/15 blur-3xl" />
 
       {/* Language toggle */}
       <motion.button
@@ -104,9 +104,9 @@ export const Login = () => {
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, type: 'spring', damping: 12 }}
-          className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gold-shine shadow-gold"
+          className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-rose-shine shadow-rose"
         >
-          <ShoppingCart size={38} className="text-wood-dark" />
+          <ShoppingCart size={38} className="text-white" />
         </motion.div>
         <div className="mb-6 text-center">
           <h1 className="text-display text-4xl font-bold text-white">{t('appName')}</h1>
@@ -125,7 +125,7 @@ export const Login = () => {
                 placeholder="admin@suppirette.com"
                 className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-gold focus:ring-2 focus:ring-gold/30"
               />
-              {errors.identifier && <p className="mt-1 text-xs text-terracotta">{t('required')}</p>}
+              {errors.identifier && <p className="mt-1 text-xs text-red-300">{t('required')}</p>}
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-white/90">{t('password')}</label>
@@ -135,7 +135,7 @@ export const Login = () => {
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-gold focus:ring-2 focus:ring-gold/30"
               />
-              {errors.password && <p className="mt-1 text-xs text-terracotta">{t('required')}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-300">{t('required')}</p>}
             </div>
 
             <Button type="submit" variant="primary" size="lg" className="w-full">
@@ -143,6 +143,28 @@ export const Login = () => {
               {t('login')}
             </Button>
           </form>
+
+          {/* Demo account — one click into a fully populated workspace */}
+          <div className="my-5 flex items-center gap-3" aria-hidden="true">
+            <span className="h-px flex-1 bg-white/15" />
+            <span className="text-[11px] font-medium uppercase tracking-wider text-white/45">
+              {t('or')}
+            </span>
+            <span className="h-px flex-1 bg-white/15" />
+          </div>
+
+          <motion.button
+            type="button"
+            onClick={onDemo}
+            whileHover={{ scale: 1.015 }}
+            whileTap={{ scale: 0.985 }}
+            transition={{ duration: 0.15 }}
+            className="group flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/25 bg-white/10 px-6 py-3 text-base font-semibold text-white transition-colors duration-150 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            <Sparkles size={18} className="text-sky-300" />
+            {t('demoAccess')}
+          </motion.button>
+          <p className="mt-2 text-center text-xs text-white/55">{t('demoHint')}</p>
 
           {/* Create admin toggle */}
           {canCreateAdmin && (

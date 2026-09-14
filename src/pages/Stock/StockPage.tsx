@@ -28,7 +28,7 @@ const ExpiryPill = ({ product, full = false }: { product: Product; full?: boolea
     info.status === 'expired'
       ? 'bg-terracotta/15 text-terracotta border-terracotta/30'
       : info.status === 'soon'
-        ? 'bg-gold/15 text-[#8a6420] border-gold/40'
+        ? 'bg-gold/15 text-[#B45309] border-gold/40'
         : 'bg-sage/12 text-sage border-sage/25'
   const Icon = info.status === 'expired' ? CalendarX : CalendarClock
   const note =

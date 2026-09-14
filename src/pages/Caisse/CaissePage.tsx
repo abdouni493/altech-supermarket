@@ -402,7 +402,7 @@ export const CaissePage = () => {
             <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-wood ${stats.netFlow >= 0 ? 'from-gold to-gold-light' : 'from-terracotta to-red-600'}`}><TrendingUp size={20} /></div>
             <div>
               <p className="text-sm font-medium text-wood-medium">{t('netFlow')}</p>
-              <p className={`text-mono text-xl font-bold ${stats.netFlow >= 0 ? 'text-[#8a6420]' : 'text-terracotta'}`}>{formatMoney(stats.netFlow)}</p>
+              <p className={`text-mono text-xl font-bold ${stats.netFlow >= 0 ? 'text-[#B45309]' : 'text-terracotta'}`}>{formatMoney(stats.netFlow)}</p>
             </div>
           </div>
         </motion.div>
@@ -443,13 +443,13 @@ export const CaissePage = () => {
         <Panel title={t('inflowVsOutflow')} icon={<TrendingUp size={18} className="text-sage" />}>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E879F940" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#8B3A9E' }} interval={0} />
-              <YAxis tick={{ fontSize: 11, fill: '#8B3A9E' }} tickFormatter={(v) => `${v / 1000}k`} />
-              <Tooltip formatter={(v: number) => formatMoney(v)} contentStyle={{ borderRadius: 12, border: '1px solid #C026D340' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#0EA5E940" />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748B' }} interval={0} />
+              <YAxis tick={{ fontSize: 11, fill: '#64748B' }} tickFormatter={(v) => `${v / 1000}k`} />
+              <Tooltip formatter={(v: number) => formatMoney(v)} contentStyle={{ borderRadius: 12, border: '1px solid #0369A140' }} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {chartData.map((d, i) => (
-                  <Cell key={i} fill={d.kind === 'in' ? '#3F9E84' : '#C026D3'} />
+                  <Cell key={i} fill={d.kind === 'in' ? '#15803D' : '#0369A1'} />
                 ))}
               </Bar>
             </BarChart>
@@ -560,12 +560,12 @@ export const CaissePage = () => {
           </div>
         </Panel>
 
-        <Panel title={t('workerMovements')} icon={<HandCoins size={18} className="text-[#8a6420]" />}>
+        <Panel title={t('workerMovements')} icon={<HandCoins size={18} className="text-[#B45309]" />}>
           <div className="space-y-3">
             <div>
               <p className="mb-1.5 flex items-center justify-between px-1 text-[11px] font-bold uppercase tracking-wide text-wood-medium">
                 <span>{t('salariesPaid')}</span>
-                <span className="text-mono normal-case text-[#8a6420]">{formatMoney(workerMov.totalPayments)}</span>
+                <span className="text-mono normal-case text-[#B45309]">{formatMoney(workerMov.totalPayments)}</span>
               </p>
               <MiniTable
                 head={[t('workers'), t('date'), t('amount')]}

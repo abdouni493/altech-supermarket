@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Search, PackageOpen } from 'lucide-react'
+import { Search, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import { fadeUp } from '@/utils/animations'
 import { clsx } from '@/utils/clsx'
 
@@ -113,5 +113,90 @@ export const ProgressBar = ({ value, max, danger }: { value: number; max: number
         )}
       />
     </div>
+  )
+}
+
+/**
+ * Page control for long record lists. A year of trading is thousands of rows —
+ * rendering them all costs seconds and tens of thousands of DOM nodes, so every
+ * list backed by transaction history pages through this.
+ */
+export const Pagination = ({
+  page,
+  pageCount,
+  total,
+  onPage,
+  labels,
+}: {
+  page: number
+  pageCount: number
+  total: number
+  onPage: (p: number) => void
+  labels: { results: string }
+}) => {
+  if (pageCount <= 1) return null
+
+  // A compact window around the current page: 1 … 4 5 [6] 7 8 … 24
+  const window: (number | '…')[] = []
+  const push = (n: number | '…') => window.push(n)
+  const from = Math.max(2, page - 1)
+  const to = Math.min(pageCount - 1, page + 1)
+  push(1)
+  if (from > 2) push('…')
+  for (let i = from; i <= to; i++) push(i)
+  if (to < pageCount - 1) push('…')
+  if (pageCount > 1) push(pageCount)
+
+  const btn =
+    'flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg px-2 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40'
+
+  return (
+    <nav
+      className="mt-4 flex flex-wrap items-center justify-between gap-3"
+      aria-label={labels.results}
+    >
+      <p className="text-xs text-wood-medium">
+        {total} {labels.results}
+      </p>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => onPage(page - 1)}
+          disabled={page <= 1}
+          aria-label="Précédent"
+          className={clsx(btn, 'text-wood-medium hover:bg-wood-cream')}
+        >
+          <ChevronLeft size={16} />
+        </button>
+        {window.map((n, i) =>
+          n === '…' ? (
+            <span key={`gap-${i}`} className="px-1 text-sm text-wood-medium/60">
+              …
+            </span>
+          ) : (
+            <button
+              key={n}
+              onClick={() => onPage(n)}
+              aria-current={n === page ? 'page' : undefined}
+              className={clsx(
+                btn,
+                n === page
+                  ? 'bg-wood-btn text-white shadow-wood'
+                  : 'text-wood-medium hover:bg-wood-cream',
+              )}
+            >
+              {n}
+            </button>
+          ),
+        )}
+        <button
+          onClick={() => onPage(page + 1)}
+          disabled={page >= pageCount}
+          aria-label="Suivant"
+          className={clsx(btn, 'text-wood-medium hover:bg-wood-cream')}
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+    </nav>
   )
 }

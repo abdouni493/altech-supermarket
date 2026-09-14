@@ -136,6 +136,6 @@ export const useWorkerStore = create<WorkerState>()(
         }
       },
     }),
-    { name: 'cosmetics-workers' },
+    { name: 'suppirette-workers-v2' },
   ),
 )

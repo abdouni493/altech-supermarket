@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AppUser } from '@/types'
 import { DEMO_ADMIN } from '@/data/initialData'
-import api from '@/utils/api'
 import { uid } from '@/utils/helpers'
 
 interface AuthState {
@@ -10,7 +9,7 @@ interface AuthState {
   currentUser: AppUser | null
   loadFromServer?: () => Promise<void>
   login: (identifier: string, password: string) => AppUser | null
-  loginDemo: () => void
+  loginDemo: () => AppUser
   createAdmin: (data: { fullName: string; username: string; email: string; password: string }) => AppUser
   logout: () => void
   updateAccount: (data: Partial<Pick<AppUser, 'fullName' | 'username' | 'email' | 'password'>>) => void
@@ -19,7 +18,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      users: DEMO_ADMIN ? [DEMO_ADMIN] : [],
+      users: [DEMO_ADMIN],
       currentUser: null,
       loadFromServer: async () => {
         try {
@@ -40,10 +39,14 @@ export const useAuthStore = create<AuthState>()(
         return user ?? null
       },
       loginDemo: () => {
-        api
-          .loginDemo()
-          .then((user: AppUser) => set({ currentUser: user, users: [...get().users, user] }))
-          .catch((e) => console.error('Demo login failed:', e))
+        // Resolved locally so the demo works without a backend (static hosting).
+        const existing = get().users.find((u) => u.isDemo)
+        const user = existing ?? DEMO_ADMIN
+        set((s) => ({
+          currentUser: user,
+          users: existing ? s.users : [...s.users, user],
+        }))
+        return user
       },
       createAdmin: ({ fullName, username, email, password }) => {
         const user: AppUser = {
@@ -69,6 +72,6 @@ export const useAuthStore = create<AuthState>()(
           }
         }),
     }),
-    { name: 'cosmetics-auth' },
+    { name: 'suppirette-auth-v2' },
   ),
 )

@@ -11,11 +11,11 @@ interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {
 
 const variants: Record<Variant, string> = {
   primary: 'bg-wood-btn text-white shadow-wood hover:shadow-wood-lg',
-  gold: 'bg-gold-shine text-wood-dark font-semibold shadow-gold',
-  ghost: 'bg-transparent text-wood-medium hover:bg-wood-light/10',
-  danger: 'bg-gradient-to-br from-terracotta to-red-700 text-white shadow-wood',
-  outline: 'bg-white/70 text-wood-medium border border-wood-light/40 hover:bg-wood-cream',
-  sage: 'bg-gradient-to-br from-sage to-green-700 text-white shadow-wood',
+  gold: 'bg-gold-shine text-white font-semibold shadow-gold hover:shadow-wood-lg',
+  ghost: 'bg-transparent text-wood-medium hover:bg-wood-cream',
+  danger: 'bg-terracotta text-white shadow-wood hover:bg-red-700',
+  outline: 'bg-white text-wood-medium border border-wood-light/45 hover:bg-wood-cream hover:border-wood-light/70',
+  sage: 'bg-sage text-white shadow-wood hover:bg-green-800',
 }
 
 const sizes: Record<Size, string> = {
@@ -34,11 +34,12 @@ export const Button = ({
   ...props
 }: ButtonProps) => (
   <motion.button
-    whileHover={disabled ? undefined : { scale: 1.03 }}
-    whileTap={disabled ? undefined : { scale: 0.97 }}
+    whileHover={disabled ? undefined : { scale: 1.015 }}
+    whileTap={disabled ? undefined : { scale: 0.985 }}
+    transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
     disabled={disabled}
     className={clsx(
-      'inline-flex items-center justify-center rounded-xl font-medium transition-shadow outline-none focus-visible:ring-2 focus-visible:ring-gold/50 disabled:cursor-not-allowed disabled:opacity-50',
+      'inline-flex cursor-pointer items-center justify-center rounded-xl font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-wood-warm/45 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
       variants[variant],
       sizes[size],
       className,

@@ -55,6 +55,6 @@ export const useExpenseStore = create<ExpenseState>()(
         }
       },
     }),
-    { name: 'cosmetics-expenses' },
+    { name: 'suppirette-expenses-v2' },
   ),
 )

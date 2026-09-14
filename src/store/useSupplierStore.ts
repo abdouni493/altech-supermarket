@@ -55,6 +55,6 @@ export const useSupplierStore = create<SupplierState>()(
         }
       },
     }),
-    { name: 'cosmetics-suppliers' },
+    { name: 'suppirette-suppliers-v2' },
   ),
 )

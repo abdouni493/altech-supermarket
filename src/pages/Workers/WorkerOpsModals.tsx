@@ -46,7 +46,7 @@ export const AdvancesModal = ({ open, onClose, worker }: OpProps) => {
 
         <div className="flex items-center justify-between rounded-xl bg-gold/10 px-4 py-2 text-sm">
           <span className="flex items-center gap-2 text-wood-medium"><Coins size={16} />{t('advances')} ({t('remaining')})</span>
-          <span className="text-mono font-bold text-[#8a6420]">{formatMoney(pending)}</span>
+          <span className="text-mono font-bold text-[#B45309]">{formatMoney(pending)}</span>
         </div>
 
         <div className="max-h-52 space-y-1.5 overflow-y-auto">
@@ -59,7 +59,7 @@ export const AdvancesModal = ({ open, onClose, worker }: OpProps) => {
                   <p className="font-medium text-wood-dark">{a.description || '—'}</p>
                   <p className="text-xs text-wood-medium">{format(new Date(a.date), 'dd/MM/yyyy')}{a.deducted ? ` · ${t('paid')}` : ''}</p>
                 </div>
-                <span className="text-mono font-bold text-[#8a6420]">{formatMoney(a.amount)}</span>
+                <span className="text-mono font-bold text-[#B45309]">{formatMoney(a.amount)}</span>
               </div>
             ))
           )}

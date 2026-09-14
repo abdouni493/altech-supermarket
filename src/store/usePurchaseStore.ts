@@ -85,6 +85,6 @@ export const usePurchaseStore = create<PurchaseState>()(
         }
       },
     }),
-    { name: 'cosmetics-purchases' },
+    { name: 'suppirette-purchases-v2' },
   ),
 )

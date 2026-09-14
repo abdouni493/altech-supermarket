@@ -4,13 +4,13 @@ import { clsx } from '@/utils/clsx'
 type Tone = 'paid' | 'partial' | 'unpaid' | 'neutral' | 'gold' | 'info' | 'sage'
 
 const tones: Record<Tone, string> = {
-  paid: 'bg-sage/15 text-sage border-sage/30',
-  partial: 'bg-gold/15 text-[#8a6420] border-gold/30',
-  unpaid: 'bg-terracotta/15 text-terracotta border-terracotta/30',
-  neutral: 'bg-wood-light/15 text-wood-medium border-wood-light/30',
-  gold: 'bg-gold-shine text-wood-dark border-gold/40',
-  info: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
-  sage: 'bg-sage/15 text-sage border-sage/30',
+  paid: 'bg-sage/10 text-sage border-sage/25',
+  partial: 'bg-gold/10 text-gold border-gold/25',
+  unpaid: 'bg-terracotta/10 text-terracotta border-terracotta/25',
+  neutral: 'bg-wood-cream text-wood-medium border-wood-light/35',
+  gold: 'bg-gold/10 text-gold border-gold/25',
+  info: 'bg-wood-warm/10 text-wood-warm border-wood-warm/25',
+  sage: 'bg-sage/10 text-sage border-sage/25',
 }
 
 export const Badge = ({

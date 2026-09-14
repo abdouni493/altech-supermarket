@@ -83,6 +83,6 @@ export const useSalesStore = create<SalesState>()(
         }
       },
     }),
-    { name: 'cosmetics-sales' },
+    { name: 'suppirette-sales-v2' },
   ),
 )

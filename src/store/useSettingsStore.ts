@@ -33,7 +33,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
     }),
     {
-      name: 'cosmetics-settings',
+      name: 'suppirette-settings-v2',
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<SettingsState>
         return { ...current, ...p, settings: { ...INITIAL_SETTINGS, ...(p.settings ?? {}) } }

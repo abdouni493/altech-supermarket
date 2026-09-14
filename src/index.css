@@ -3,19 +3,27 @@
 @tailwind utilities;
 
 :root {
-  /* Cosmetics palette — violet · fuchsia · pink · lilac with rose-gold accent */
-  --wood-dark: #3b0764;
-  --wood-medium: #9333c4;
-  --wood-warm: #c026d3;
-  --wood-light: #e879f9;
-  --wood-blonde: #f5c2f1;
-  --wood-cream: #faeafb;
-  --wood-white: #fdf6fe;
-  --gold: #c9789a;
-  --gold-light: #f0b6d8;
-  --green-sage: #3f9e84;
-  --terracotta: #e24a6a;
-  --charcoal: #2a1140;
+  /* Supermarket retail palette — navy structure · blue action · green money.
+     Mirrors the tokens in tailwind.config.js; see that file for semantics. */
+  --wood-dark: #0f172a;
+  --wood-medium: #475569;
+  --wood-warm: #0369a1;
+  --wood-light: #94a3b8;
+  --wood-blonde: #cbd5e1;
+  --wood-cream: #f1f5f9;
+  --wood-white: #f8fafc;
+  --gold: #b45309;
+  --gold-light: #f59e0b;
+  --green-sage: #15803d;
+  --terracotta: #dc2626;
+  --charcoal: #0f172a;
+
+  /* Motion tokens — one rhythm for the whole app (see the animation rules in
+     the UI guidelines: 150–300ms for micro-interactions, ease-out on entry). */
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
 }
 
 * {
@@ -33,7 +41,7 @@ body,
 body {
   font-family: 'Inter', 'Cairo', system-ui, sans-serif;
   color: var(--charcoal);
-  background: linear-gradient(135deg, #fdf6fe 0%, #faeafb 60%, #fce7f3 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -42,7 +50,14 @@ html[dir='rtl'] body {
   font-family: 'Cairo', 'Inter', sans-serif;
 }
 
-/* Soft beauty sheen overlay used on dark/brand surfaces */
+/* Money and quantity columns must not jitter as digits change. */
+.text-mono,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle depth overlay for the navy chrome (sidebar, login). Replaces the old
+   decorative colour wash with a restrained lift that keeps text legible. */
 .wood-grain {
   position: relative;
 }
@@ -51,15 +66,13 @@ html[dir='rtl'] body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.55;
   background-image: radial-gradient(
-      120% 80% at 80% 0%,
-      rgba(255, 255, 255, 0.18) 0%,
-      rgba(255, 255, 255, 0) 55%
+      120% 80% at 85% 0%,
+      rgba(56, 189, 248, 0.16) 0%,
+      rgba(56, 189, 248, 0) 58%
     ),
-    radial-gradient(70% 60% at 12% 100%, rgba(236, 72, 153, 0.28) 0%, rgba(236, 72, 153, 0) 62%),
-    radial-gradient(60% 60% at 95% 90%, rgba(147, 51, 234, 0.22) 0%, rgba(147, 51, 234, 0) 60%);
-  mix-blend-mode: screen;
+    radial-gradient(80% 70% at 10% 100%, rgba(14, 165, 233, 0.14) 0%, rgba(14, 165, 233, 0) 62%);
 }
 
 /* Scrollbars */
@@ -68,40 +81,46 @@ html[dir='rtl'] body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(232, 121, 249, 0.08);
+  background: rgba(148, 163, 184, 0.12);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #e879f9, #c026d3);
+  background: #94a3b8;
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #c026d3, #7e22ce);
+  background: #64748b;
   background-clip: padding-box;
+}
+
+/* Keyboard focus is always visible, and always the brand blue. */
+:focus-visible {
+  outline: 2px solid var(--wood-warm);
+  outline-offset: 2px;
 }
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.16);
   }
 
   .card-wood {
-    background: linear-gradient(145deg, #ffffff 0%, #fdf6fe 100%);
-    box-shadow: 0 4px 20px rgba(59, 7, 100, 0.09);
-    border: 1px solid rgba(232, 121, 249, 0.16);
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 12px rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.22);
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
     color: #fff;
   }
 
   .input-wood {
-    @apply w-full rounded-xl border border-wood-light/40 bg-white/80 px-4 py-2.5 text-sm text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30 placeholder:text-wood-medium/40;
+    @apply w-full rounded-xl border border-wood-light/45 bg-white px-4 py-2.5 text-sm text-charcoal outline-none transition-colors duration-150 placeholder:text-wood-medium/45 focus:border-wood-warm focus:ring-2 focus:ring-wood-warm/25;
   }
 
   .label-wood {
@@ -109,11 +128,29 @@ html[dir='rtl'] body {
   }
 
   .text-display {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   .text-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* Table rows highlight on hover — the core interaction in a data-dense app. */
+  .row-hover {
+    @apply transition-colors duration-150 hover:bg-wood-cream/70;
+  }
+}
+
+/* Respect the user's motion preference: keep meaning, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CaisseTransaction } from '@/types'
+import { INITIAL_CAISSE } from '@/data/initialData'
 import { uid } from '@/utils/helpers'
 import api from '@/utils/api'
 
@@ -15,7 +16,7 @@ interface CaisseState {
 export const useCaisseStore = create<CaisseState>()(
   persist(
     (set) => ({
-      transactions: [],
+      transactions: INITIAL_CAISSE,
       loadFromServer: async () => {
         try {
           const data = await api.getCaisse()
@@ -54,6 +55,6 @@ export const useCaisseStore = create<CaisseState>()(
         }
       },
     }),
-    { name: 'cosmetics-caisse' },
+    { name: 'suppirette-caisse-v2' },
   ),
 )

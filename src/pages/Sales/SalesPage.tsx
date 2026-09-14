@@ -1,10 +1,10 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useReactToPrint } from 'react-to-print'
 import { format, startOfDay, startOfWeek, startOfMonth, isAfter } from 'date-fns'
 import toast from 'react-hot-toast'
 import { Eye, CreditCard, Printer, Trash2, BadgeDollarSign, Pencil, Check } from 'lucide-react'
-import { PageHeader, SearchInput, EmptyState, ViewToggle } from '@/components/ui/Misc'
+import { PageHeader, SearchInput, EmptyState, ViewToggle, Pagination } from '@/components/ui/Misc'
 import { Button } from '@/components/ui/Button'
 import { Badge, statusTone } from '@/components/ui/Badge'
 import { Select, Input } from '@/components/ui/Input'
@@ -21,6 +21,9 @@ import { cardVariants, staggerContainer } from '@/utils/animations'
 import type { Sale } from '@/types'
 
 type QuickFilter = 'all' | 'today' | 'week' | 'month'
+
+/** Rows per page — a full trading year is thousands of sales. */
+const PAGE_SIZE = 25
 
 export const SalesPage = () => {
   const { t } = useTranslation()
@@ -64,6 +67,16 @@ export const SalesPage = () => {
     })
   }, [sales, search, quick, fromDate, toDate, statusFilter])
 
+  const [page, setPage] = useState(1)
+  // Any change of filter puts the user back on the first page of the new result set.
+  useEffect(() => setPage(1), [search, quick, fromDate, toDate, statusFilter])
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paged = useMemo(
+    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filtered, page],
+  )
+
   const statusLabel = (s: 'paid' | 'partial' | 'unpaid') =>
     s === 'paid' ? t('statusPaid') : s === 'partial' ? t('statusPartial') : t('statusUnpaid')
 
@@ -102,7 +115,7 @@ export const SalesPage = () => {
       ) : view === 'cards' ? (
         <motion.div variants={staggerContainer} initial="initial" animate="animate" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence>
-            {filtered.map((s, i) => {
+            {paged.map((s, i) => {
               const status = paymentStatus(s.total, s.paid)
               const rest = remaining(s.total, s.paid)
               return (
@@ -146,7 +159,7 @@ export const SalesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((s) => {
+                {paged.map((s) => {
                   const status = paymentStatus(s.total, s.paid)
                   const rest = remaining(s.total, s.paid)
                   return (
@@ -174,6 +187,16 @@ export const SalesPage = () => {
             </table>
           </div>
         </div>
+      )}
+
+      {filtered.length > 0 && (
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          total={filtered.length}
+          onPage={setPage}
+          labels={{ results: t('results') }}
+        />
       )}
 
       {/* View */}

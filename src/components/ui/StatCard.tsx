@@ -20,8 +20,8 @@ const AnimatedNumber = ({ value, decimals }: { value: number; decimals?: boolean
 
   useEffect(() => {
     const controls = animate(mv, value, {
-      duration: 1.1,
-      ease: 'easeOut',
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
       onUpdate: (v) => {
         setDisplay(
           decimals
@@ -43,7 +43,7 @@ export const StatCard = ({
   index = 0,
   suffix,
   decimals,
-  accent = 'from-wood-medium to-wood-light',
+  accent = 'from-wood-warm to-sky-500',
   hint,
 }: StatCardProps) => (
   <motion.div
@@ -51,7 +51,8 @@ export const StatCard = ({
     initial="initial"
     animate="animate"
     custom={index}
-    whileHover={{ y: -4 }}
+    whileHover={{ y: -2 }}
+    transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
     className="card-wood relative overflow-hidden rounded-2xl p-5"
   >
     <div className={clsx('absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br opacity-10', accent)} />
@@ -60,10 +61,10 @@ export const StatCard = ({
         {icon}
       </div>
     </div>
-    <p className="mt-4 text-sm font-medium text-wood-medium">{label}</p>
-    <p className="text-mono mt-1 text-2xl font-bold text-wood-dark">
+    <p className="mt-4 text-sm font-medium leading-snug text-wood-medium">{label}</p>
+    <p className="text-mono mt-1 break-words text-xl font-bold leading-tight text-wood-dark">
       <AnimatedNumber value={value} decimals={decimals} />
-      {suffix && <span className="ml-1 text-base font-medium text-wood-medium">{suffix}</span>}
+      {suffix && <span className="ml-1 text-sm font-medium text-wood-medium">{suffix}</span>}
     </p>
     {hint && <div className="mt-1 text-xs text-wood-medium/70">{hint}</div>}
   </motion.div>

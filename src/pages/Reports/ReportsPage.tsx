@@ -46,7 +46,8 @@ import {
   productSalesAnalysis,
 } from '@/utils/calculations'
 
-const CAT_COLORS = ['#C026D3', '#DB2777', '#9333EA', '#7C3AED', '#E879F9', '#F472B6', '#A855F7', '#EC4899', '#8B5CF6']
+// Categorical palette — validated for CVD separation and contrast (dataviz skill).
+const CAT_COLORS = ['#0369A1', '#B45309', '#0891B2', '#15803D', '#7C3AED', '#BE185D', '#0D9488', '#9F1239']
 
 const SummaryCard = ({ label, value, color, icon }: { label: string; value: number; color: string; icon: React.ReactNode }) => (
   <div className="card-wood rounded-2xl p-4">
@@ -182,7 +183,7 @@ export const ReportsPage = () => {
                 <SummaryCard label={t('totalPurchasesReport')} value={report.totalPurchases} color="bg-wood-warm" icon={<ShoppingCart size={18} />} />
                 <SummaryCard label={t('totalExpenses')} value={report.totalExpenses} color="bg-terracotta" icon={<Wallet size={18} />} />
                 <SummaryCard label={t('totalSalaries')} value={report.totalSalaries} color="bg-gold" icon={<HardHat size={18} />} />
-                <SummaryCard label={t('grossMargin')} value={report.grossMargin} color="bg-gradient-to-br from-fuchsia-500 to-pink-500" icon={<Percent size={18} />} />
+                <SummaryCard label={t('grossMargin')} value={report.grossMargin} color="bg-cyan-700" icon={<Percent size={18} />} />
                 <div className="card-wood rounded-2xl bg-wood-btn p-4 text-white">
                   <p className="text-xs opacity-90">{t('netProfit')}</p>
                   <p className="text-mono mt-2 text-xl font-bold">{formatMoney(report.netProfit)}</p>
@@ -225,11 +226,11 @@ export const ReportsPage = () => {
                   {report.bestSellers.length > 0 && (
                     <ResponsiveContainer width="100%" height={200}>
                       <BarChart data={report.bestSellers} layout="vertical" margin={{ left: 8, right: 16 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#E879F940" horizontal={false} />
-                        <XAxis type="number" tick={{ fontSize: 10, fill: '#8B3A9E' }} />
-                        <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 9, fill: '#8B3A9E' }} />
-                        <Tooltip formatter={(v: number) => `${v}`} contentStyle={{ borderRadius: 12, border: '1px solid #C026D340' }} />
-                        <Bar dataKey="quantity" name={t('qtySold')} fill="#C026D3" radius={[0, 4, 4, 0]} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#0EA5E940" horizontal={false} />
+                        <XAxis type="number" tick={{ fontSize: 10, fill: '#64748B' }} />
+                        <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 9, fill: '#64748B' }} />
+                        <Tooltip formatter={(v: number) => `${v}`} contentStyle={{ borderRadius: 12, border: '1px solid #0369A140' }} />
+                        <Bar dataKey="quantity" name={t('qtySold')} fill="#0369A1" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -261,7 +262,7 @@ export const ReportsPage = () => {
                           <Cell key={i} fill={CAT_COLORS[i % CAT_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(v: number) => formatMoney(v)} contentStyle={{ borderRadius: 12, border: '1px solid #C026D340' }} />
+                      <Tooltip formatter={(v: number) => formatMoney(v)} contentStyle={{ borderRadius: 12, border: '1px solid #0369A140' }} />
                       <Legend wrapperStyle={{ fontSize: 11 }} />
                     </PieChart>
                   </ResponsiveContainer>
@@ -279,11 +280,11 @@ export const ReportsPage = () => {
               {report.topProducts.length > 0 && (
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={report.topProducts}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E879F940" />
-                    <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#8B3A9E' }} interval={0} angle={-15} textAnchor="end" height={60} />
-                    <YAxis tick={{ fontSize: 11, fill: '#8B3A9E' }} />
-                    <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #C026D340' }} />
-                    <Bar dataKey="quantity" name={t('quantity')} fill="#C026D3" radius={[4, 4, 0, 0]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#0EA5E940" />
+                    <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#64748B' }} interval={0} angle={-15} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748B' }} />
+                    <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #0369A140' }} />
+                    <Bar dataKey="quantity" name={t('quantity')} fill="#0369A1" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}

@@ -26,16 +26,16 @@ export interface NavItem {
 
 // Icons & accent colours tuned for a supermarket / grocery store.
 export const NAV_ITEMS: NavItem[] = [
-  { key: 'dashboard', path: '/dashboard', labelKey: 'dashboard', icon: LayoutDashboard, color: '#67E8F9' },
-  { key: 'stock', path: '/stock', labelKey: 'stock', icon: Package, color: '#4ADE80' },
-  { key: 'purchase', path: '/purchase', labelKey: 'purchase', icon: ClipboardList, color: '#FB923C' },
-  { key: 'pos', path: '/pos', labelKey: 'pos', icon: ShoppingCart, color: '#38BDF8' },
-  { key: 'sales', path: '/sales', labelKey: 'sales', icon: Receipt, color: '#A3E635' },
-  { key: 'clients', path: '/clients', labelKey: 'clients', icon: Users, color: '#818CF8' },
-  { key: 'suppliers', path: '/suppliers', labelKey: 'suppliers', icon: Truck, color: '#F87171' },
-  { key: 'workers', path: '/workers', labelKey: 'workers', icon: UserCog, color: '#C084FC' },
-  { key: 'expenses', path: '/expenses', labelKey: 'expenses', icon: CreditCard, color: '#FB7185' },
-  { key: 'caisse', path: '/caisse', labelKey: 'caisse', icon: Coins, color: '#FACC15' },
-  { key: 'reports', path: '/reports', labelKey: 'reports', icon: TrendingUp, color: '#2DD4BF' },
-  { key: 'settings', path: '/settings', labelKey: 'settings', icon: Settings, color: '#94A3B8' },
+  { key: 'dashboard', path: '/dashboard', labelKey: 'dashboard', icon: LayoutDashboard, color: '#7DD3FC' },
+  { key: 'stock', path: '/stock', labelKey: 'stock', icon: Package, color: '#6EE7B7' },
+  { key: 'purchase', path: '/purchase', labelKey: 'purchase', icon: ClipboardList, color: '#FCD34D' },
+  { key: 'pos', path: '/pos', labelKey: 'pos', icon: ShoppingCart, color: '#93C5FD' },
+  { key: 'sales', path: '/sales', labelKey: 'sales', icon: Receipt, color: '#86EFAC' },
+  { key: 'clients', path: '/clients', labelKey: 'clients', icon: Users, color: '#A5B4FC' },
+  { key: 'suppliers', path: '/suppliers', labelKey: 'suppliers', icon: Truck, color: '#FDA4AF' },
+  { key: 'workers', path: '/workers', labelKey: 'workers', icon: UserCog, color: '#C4B5FD' },
+  { key: 'expenses', path: '/expenses', labelKey: 'expenses', icon: CreditCard, color: '#FDBA74' },
+  { key: 'caisse', path: '/caisse', labelKey: 'caisse', icon: Coins, color: '#FDE047' },
+  { key: 'reports', path: '/reports', labelKey: 'reports', icon: TrendingUp, color: '#5EEAD4' },
+  { key: 'settings', path: '/settings', labelKey: 'settings', icon: Settings, color: '#CBD5E1' },
 ]
