@@ -5,11 +5,12 @@ import { z } from 'zod'
 import { useReactToPrint } from 'react-to-print'
 import { useRef } from 'react'
 import toast from 'react-hot-toast'
-import { Plus, RefreshCw, Printer, Check, Boxes, Info } from 'lucide-react'
+import { Plus, RefreshCw, Printer, Check, Boxes, Info, Camera } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Barcode } from '@/components/shared/BarcodeGenerator'
+import { BarcodeScanner } from '@/components/shared/BarcodeScanner'
 import { useProductStore } from '@/store/useProductStore'
 import { useTranslation } from '@/i18n/useTranslation'
 import { generateEAN13 } from '@/utils/helpers'
@@ -33,15 +34,18 @@ interface ProductModalProps {
   product?: Product | null
   onSaved?: (product: Product) => void
   presetName?: string
+  /** Pre-fills the barcode field — used when a purchase line is started from a scan. */
+  presetBarcode?: string
 }
 
-export const ProductModal = ({ open, onClose, product, onSaved, presetName }: ProductModalProps) => {
+export const ProductModal = ({ open, onClose, product, onSaved, presetName, presetBarcode }: ProductModalProps) => {
   const { t } = useTranslation()
   const { brands, categories, addProduct, updateProduct, addBrand, addCategory } = useProductStore()
   const printRef = useRef<HTMLDivElement>(null)
 
   const [showAddBrand, setShowAddBrand] = useState(false)
   const [showAddCat, setShowAddCat] = useState(false)
+  const [scanOpen, setScanOpen] = useState(false)
   const [newBrand, setNewBrand] = useState('')
   const [newCat, setNewCat] = useState('')
 
@@ -79,13 +83,13 @@ export const ProductModal = ({ open, onClose, product, onSaved, presetName }: Pr
       reset({
         name: presetName ?? '',
         description: '',
-        barcode: '', // empty by default — generate on demand
+        barcode: presetBarcode ?? '', // empty by default — scan or generate on demand
         brand: brands[0] ?? '',
         category: categories[0] ?? '',
         quantity: 0,
       })
     }
-  }, [open, product, presetName]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open, product, presetName, presetBarcode]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const barcode = watch('barcode')
 
@@ -231,9 +235,13 @@ export const ProductModal = ({ open, onClose, product, onSaved, presetName }: Pr
         </div>
 
         {/* Barcode (optional) */}
-        <div className="rounded-xl border border-wood-light/30 bg-wood-cream/40 p-4">
-          <div className="flex flex-wrap items-end gap-3">
-            <Input label={`${t('barcode')} (${t('optional')})`} className="font-mono" {...register('barcode')} />
+        <div className="rounded-xl border border-wood-light/30 bg-wood-cream/40 p-3 sm:p-4">
+          <Input label={`${t('barcode')} (${t('optional')})`} className="font-mono" {...register('barcode')} />
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <Button type="button" variant="sage" onClick={() => setScanOpen(true)}>
+              <Camera size={15} />
+              {t('scan')}
+            </Button>
             <Button type="button" variant="outline" onClick={() => setValue('barcode', generateEAN13())}>
               <RefreshCw size={15} />
               {t('generateBarcode')}
@@ -260,6 +268,12 @@ export const ProductModal = ({ open, onClose, product, onSaved, presetName }: Pr
             </div>
           </div>
         </div>
+
+        <BarcodeScanner
+          open={scanOpen}
+          onClose={() => setScanOpen(false)}
+          onDetected={(code) => setValue('barcode', code, { shouldValidate: true })}
+        />
 
         {/* Pricing notice — set later during the first purchase */}
         <div className="flex items-start gap-2 rounded-xl border border-wood-light/30 bg-gradient-to-br from-wood-cream/60 to-white px-4 py-3 text-xs text-wood-medium">

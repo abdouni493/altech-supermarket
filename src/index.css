@@ -58,8 +58,12 @@ html[dir='rtl'] body {
 
 /* Subtle depth overlay for the navy chrome (sidebar, login). Replaces the old
    decorative colour wash with a restrained lift that keeps text legible. */
-.wood-grain {
-  position: relative;
+/* Declared in the components layer so positioning utilities (`fixed`, on the
+   mobile drawer) still win over it. */
+@layer components {
+  .wood-grain {
+    position: relative;
+  }
 }
 .wood-grain::after {
   content: '';

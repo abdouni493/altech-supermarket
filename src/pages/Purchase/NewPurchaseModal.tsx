@@ -1,11 +1,12 @@
 import { useState, useMemo, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
-import { Search, Plus, Trash2, Check, PackagePlus, UserPlus, ShoppingCart, CalendarClock } from 'lucide-react'
+import { Search, Plus, Trash2, Check, PackagePlus, UserPlus, ShoppingCart, CalendarClock, Camera } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { ProductModal } from '@/pages/Stock/ProductModal'
+import { BarcodeScanner } from '@/components/shared/BarcodeScanner'
 import { useProductStore } from '@/store/useProductStore'
 import { useSupplierStore } from '@/store/useSupplierStore'
 import { usePurchaseStore } from '@/store/usePurchaseStore'
@@ -33,6 +34,8 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
   const [lines, setLines] = useState<EditableLine[]>([])
   const [productQuery, setProductQuery] = useState('')
   const [showProductModal, setShowProductModal] = useState(false)
+  const [scanOpen, setScanOpen] = useState(false)
+  const [scannedBarcode, setScannedBarcode] = useState('')
 
   const [supplier, setSupplier] = useState<Supplier | null>(null)
   const [supplierQuery, setSupplierQuery] = useState('')
@@ -58,6 +61,7 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
       setDate(format(new Date(), 'yyyy-MM-dd'))
     }
     setProductQuery('')
+    setScannedBarcode('')
   }, [open, editing]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const total = useMemo(
@@ -86,22 +90,48 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
   }, [supplierQuery, suppliers, supplier])
 
   const addLine = (p: Product) => {
-    setLines((prev) => [
-      ...prev,
-      {
-        _key: `${p.id}-${Date.now()}`,
-        productId: p.id,
-        productName: p.name,
-        barcode: p.barcode,
-        quantity: 1,
-        purchasePrice: p.purchasePrice,
-        salePrice: p.salePrice,
-        minQuantity: p.minQuantity,
-        hasExpiration: p.hasExpiration ?? false,
-        expirationDate: (p.expirationDate ?? '').slice(0, 10),
-      },
-    ])
+    setLines((prev) => {
+      // Scanning the same article twice bumps its quantity rather than opening
+      // a second line for the same product.
+      const existing = prev.find((l) => l.productId === p.id)
+      if (existing) return prev.map((l) => (l._key === existing._key ? { ...l, quantity: l.quantity + 1 } : l))
+      return [
+        ...prev,
+        {
+          _key: `${p.id}-${Date.now()}`,
+          productId: p.id,
+          productName: p.name,
+          barcode: p.barcode,
+          quantity: 1,
+          purchasePrice: p.purchasePrice,
+          salePrice: p.salePrice,
+          minQuantity: p.minQuantity,
+          hasExpiration: p.hasExpiration ?? false,
+          expirationDate: (p.expirationDate ?? '').slice(0, 10),
+        },
+      ]
+    })
     setProductQuery('')
+  }
+
+  /**
+   * A scanned code either matches an article — which goes straight onto the
+   * invoice — or it does not, and the product form opens with the barcode
+   * already filled so nothing has to be retyped.
+   */
+  const handleScanned = (code: string) => {
+    const value = code.trim()
+    const match = products.find((p) => p.barcode && p.barcode === value)
+    if (match) {
+      addLine(match)
+      toast.success(match.name)
+      return
+    }
+    setScannedBarcode(value)
+    setProductQuery(value)
+    setScanOpen(false)
+    setShowProductModal(true)
+    toast.error(t('scannedNotFound').replace('{code}', value))
   }
 
   const updateLine = (key: string, patch: Partial<EditableLine>) =>
@@ -185,23 +215,37 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           {/* Products */}
           <div className="lg:col-span-2">
-            <div className="mb-2 flex items-center justify-between gap-2">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <h4 className="flex items-center gap-2 font-bold text-wood-dark"><ShoppingCart size={18} />{t('products')}</h4>
-              <Button type="button" variant="outline" size="sm" onClick={() => setShowProductModal(true)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setScannedBarcode('')
+                  setShowProductModal(true)
+                }}
+              >
                 <PackagePlus size={15} />
                 {t('newProduct')}
               </Button>
             </div>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-wood-medium/50" size={18} />
-              <input
-                value={productQuery}
-                onChange={(e) => setProductQuery(e.target.value)}
-                placeholder={`${t('search')} (${t('productName')} / ${t('barcode')})`}
-                className="input-wood ps-10"
-              />
+            <div className="relative flex items-stretch gap-2">
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-wood-medium/50" size={18} />
+                <input
+                  value={productQuery}
+                  onChange={(e) => setProductQuery(e.target.value)}
+                  placeholder={`${t('search')} (${t('productName')} / ${t('barcode')})`}
+                  className="input-wood ps-10"
+                />
+              </div>
+              <Button type="button" variant="sage" onClick={() => setScanOpen(true)} className="shrink-0 px-3">
+                <Camera size={16} />
+                <span className="hidden sm:inline">{t('scan')}</span>
+              </Button>
               {productQuery && (
-                <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-wood-light/30 bg-white shadow-wood-lg">
+                <div className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-wood-light/30 bg-white shadow-wood-lg">
                   {productSuggestions.length > 0 ? (
                     productSuggestions.map((p) => (
                       <button
@@ -348,11 +392,17 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
         </div>
       </Modal>
 
+      <BarcodeScanner open={scanOpen} onClose={() => setScanOpen(false)} onDetected={handleScanned} continuous />
+
       <ProductModal
         open={showProductModal}
         onClose={() => setShowProductModal(false)}
-        presetName={productQuery}
-        onSaved={(p) => addLine(p)}
+        presetName={scannedBarcode ? '' : productQuery}
+        presetBarcode={scannedBarcode}
+        onSaved={(p) => {
+          addLine(p)
+          setScannedBarcode('')
+        }}
       />
     </>
   )

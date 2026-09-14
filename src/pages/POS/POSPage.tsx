@@ -1,10 +1,11 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
-import { Search, Plus, Minus, X, Trash2, ShoppingBag, UserPlus, Check, SprayCan } from 'lucide-react'
+import { Search, Plus, Minus, X, Trash2, ShoppingBag, UserPlus, Check, SprayCan, Camera } from 'lucide-react'
 import { PageHeader } from '@/components/ui/Misc'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { BarcodeScanner } from '@/components/shared/BarcodeScanner'
 import { useProductStore } from '@/store/useProductStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useSalesStore } from '@/store/useSalesStore'
@@ -16,6 +17,9 @@ import { format } from 'date-fns'
 interface CartItem extends SaleLine {
   stock: number
 }
+
+/** Shortest string we will treat as a barcode rather than as a name fragment. */
+const MIN_BARCODE_LEN = 4
 
 export const POSPage = () => {
   const { t } = useTranslation()
@@ -34,6 +38,10 @@ export const POSPage = () => {
   const [discountOn, setDiscountOn] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [received, setReceived] = useState(0)
+  const [scanOpen, setScanOpen] = useState(false)
+
+  const searchRef = useRef<HTMLInputElement>(null)
+  const searchBoxRef = useRef<HTMLDivElement>(null)
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -56,6 +64,39 @@ export const POSPage = () => {
   const change = round2(Math.max(0, received - total))
   const rest = round2(Math.max(0, total - received))
 
+  /** Returns the caret to the search box — a scan must never cost the cashier a tap. */
+  const focusSearch = useCallback(() => {
+    requestAnimationFrame(() => {
+      const el = searchRef.current
+      if (!el) return
+      el.focus()
+      el.select()
+    })
+  }, [])
+
+  // The search box is the resting position of the till, so it takes focus on
+  // arrival and keeps it between scans — but a click anywhere else genuinely
+  // releases it, instead of the field stealing focus back.
+  useEffect(() => {
+    focusSearch()
+  }, [focusSearch])
+
+  useEffect(() => {
+    const onPointerDown = (e: Event) => {
+      const el = searchRef.current
+      if (!el || document.activeElement !== el) return
+      const target = e.target as Node | null
+      if (target && searchBoxRef.current?.contains(target)) return
+      el.blur()
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('touchstart', onPointerDown, { passive: true })
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('touchstart', onPointerDown)
+    }
+  }, [])
+
   const addToCart = (productId: string) => {
     const p = products.find((x) => x.id === productId)
     if (!p) return
@@ -74,6 +115,66 @@ export const POSPage = () => {
       }
       return [...prev, { productId: p.id, productName: p.name, barcode: p.barcode, quantity: 1, unitPrice: p.salePrice, stock: p.quantity }]
     })
+  }
+
+  /**
+   * Drops a scanned code straight into the basket. Used by both the phone
+   * camera and any keyboard-wedge scanner typing into the search box.
+   */
+  const addByBarcode = useCallback(
+    (code: string, { notify = true }: { notify?: boolean } = {}) => {
+      const value = code.trim()
+      if (!value) return false
+      const match = products.find((p) => p.barcode && p.barcode === value)
+      if (!match) {
+        if (notify) toast.error(t('scannedNotFound').replace('{code}', value))
+        return false
+      }
+      addToCart(match.id)
+      if (notify) toast.success(t('scannedAdded').replace('{name}', match.name))
+      return true
+    },
+    [products], // eslint-disable-line react-hooks/exhaustive-deps
+  )
+
+  // A scanner types the whole code then usually an Enter; matching on every
+  // keystroke also covers models that send no terminator at all.
+  const onSearchChange = (value: string) => {
+    const code = value.trim()
+    if (code.length >= MIN_BARCODE_LEN && products.some((p) => p.barcode && p.barcode === code)) {
+      // The basket sits below the fold on a phone, so every scan confirms itself.
+      addByBarcode(code)
+      setSearch('')
+      focusSearch()
+      return
+    }
+    setSearch(value)
+  }
+
+  const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setSearch('')
+      return
+    }
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const code = search.trim()
+    if (!code) return
+    if (addByBarcode(code)) {
+      setSearch('')
+      focusSearch()
+      return
+    }
+    // Not a barcode — if the text narrows to a single article, sell that one.
+    if (filtered.length === 1) {
+      addToCart(filtered[0].id)
+      setSearch('')
+      focusSearch()
+    }
+  }
+
+  const handleScanned = (code: string) => {
+    addByBarcode(code)
   }
 
   const changeQty = (productId: string, delta: number) =>
@@ -143,6 +244,7 @@ export const POSPage = () => {
     lines.forEach((l) => reduceStock(l.productId, l.quantity))
     toast.success(t('saleValidated'))
     resetSale()
+    focusSearch()
   }
 
   return (
@@ -152,9 +254,44 @@ export const POSPage = () => {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
         {/* Products */}
         <div className="lg:col-span-3">
-          <div className="relative mb-4">
-            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-wood-medium/50" size={18} />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`${t('search')} (${t('productName')} / ${t('barcode')})`} className="input-wood ps-10" autoFocus />
+          <div ref={searchBoxRef} className="mb-4 flex items-stretch gap-2">
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-wood-medium/50" size={18} />
+              <input
+                ref={searchRef}
+                value={search}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onKeyDown={onSearchKeyDown}
+                placeholder={`${t('search')} (${t('productName')} / ${t('barcode')})`}
+                className="input-wood pe-9 ps-10"
+                autoFocus
+                autoComplete="off"
+                enterKeyHint="search"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('')
+                    focusSearch()
+                  }}
+                  aria-label={t('cancel')}
+                  className="absolute end-2 top-1/2 -translate-y-1/2 rounded-lg p-1 text-wood-medium/60 transition hover:bg-wood-cream hover:text-wood-dark"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <Button
+              type="button"
+              variant="sage"
+              onClick={() => setScanOpen(true)}
+              className="shrink-0 px-3"
+              title={t('scanWithCamera')}
+            >
+              <Camera size={18} />
+              <span className="hidden sm:inline">{t('scan')}</span>
+            </Button>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {filtered.map((p, i) => (
@@ -183,7 +320,7 @@ export const POSPage = () => {
 
         {/* Cart */}
         <div className="lg:col-span-2">
-          <div className="card-wood sticky top-4 flex max-h-[calc(100vh-8rem)] flex-col rounded-2xl">
+          <div className="card-wood flex flex-col rounded-2xl lg:sticky lg:top-4 lg:max-h-[calc(100vh-8rem)]">
             <div className="flex items-center justify-between rounded-t-2xl bg-wood-header px-4 py-3 text-white">
               <h3 className="flex items-center gap-2 text-display text-lg font-bold"><ShoppingBag size={20} />{t('cart')}</h3>
               {cart.length > 0 && <button onClick={resetSale} className="rounded-lg p-1 hover:bg-white/15"><Trash2 size={18} /></button>}
@@ -289,6 +426,18 @@ export const POSPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Camera scanning stays open across items so a whole basket goes through
+          in one session; closing it hands focus straight back to the till. */}
+      <BarcodeScanner
+        open={scanOpen}
+        onClose={() => {
+          setScanOpen(false)
+          focusSearch()
+        }}
+        onDetected={handleScanned}
+        continuous
+      />
     </div>
   )
 }

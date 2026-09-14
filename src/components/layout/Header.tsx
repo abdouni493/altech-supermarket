@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
-import { Bell, ChevronRight, Globe, LogOut, AlertTriangle, CalendarClock, CalendarX } from 'lucide-react'
+import { Bell, ChevronRight, Globe, LogOut, AlertTriangle, CalendarClock, CalendarX, Menu } from 'lucide-react'
 import { useTranslation } from '@/i18n/useTranslation'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useProductStore } from '@/store/useProductStore'
@@ -9,7 +9,12 @@ import { NAV_ITEMS } from './navConfig'
 import { initials, expiryInfo, type ExpiryInfo } from '@/utils/helpers'
 import type { Product } from '@/types'
 
-export const Header = () => {
+interface HeaderProps {
+  /** Opens the off-canvas sidebar. Only rendered below `lg`. */
+  onMenuClick?: () => void
+}
+
+export const Header = ({ onMenuClick }: HeaderProps) => {
   const { t, toggleLang, lang } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
@@ -42,27 +47,35 @@ export const Header = () => {
   }
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-wood-light/20 bg-wood-white/80 px-6 py-3 backdrop-blur-md">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm">
-        <Link to="/dashboard" className="text-wood-medium/70 hover:text-wood-warm">
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-wood-light/20 bg-wood-white/80 px-3 py-3 backdrop-blur-md sm:gap-4 sm:px-6">
+      {/* Menu + breadcrumb */}
+      <div className="flex min-w-0 items-center gap-2 text-sm">
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={onMenuClick}
+          aria-label={t('openMenu')}
+          className="rounded-xl border border-wood-light/40 bg-white/70 p-2 text-wood-medium transition hover:bg-wood-cream lg:hidden"
+        >
+          <Menu size={20} />
+        </motion.button>
+        <Link to="/dashboard" className="hidden text-wood-medium/70 hover:text-wood-warm sm:inline">
           {t('appName')}
         </Link>
         {crumb && (
           <>
-            <ChevronRight size={14} className="text-wood-medium/40 rtl:rotate-180" />
-            <span className="font-semibold text-wood-dark">{crumb}</span>
+            <ChevronRight size={14} className="hidden text-wood-medium/40 rtl:rotate-180 sm:inline" />
+            <span className="truncate font-semibold text-wood-dark">{crumb}</span>
           </>
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         {/* Language */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleLang}
-          className="flex items-center gap-1.5 rounded-xl border border-wood-light/40 bg-white/70 px-3 py-2 text-xs font-semibold text-wood-medium transition hover:bg-wood-cream"
+          className="flex items-center gap-1.5 rounded-xl border border-wood-light/40 bg-white/70 px-2.5 py-2 text-xs font-semibold text-wood-medium transition hover:bg-wood-cream sm:px-3"
         >
           <Globe size={16} />
           {lang === 'fr' ? 'FR' : 'ع'}
@@ -92,7 +105,7 @@ export const Header = () => {
                 initial={{ opacity: 0, y: 8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                className="card-wood absolute end-0 mt-2 w-80 rounded-2xl p-3 shadow-wood-lg"
+                className="card-wood absolute end-0 mt-2 w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-3 shadow-wood-lg"
               >
                 {alertCount === 0 ? (
                   <p className="px-1 py-3 text-center text-xs text-wood-medium">{t('noData')}</p>
@@ -164,12 +177,12 @@ export const Header = () => {
               setMenuOpen((v) => !v)
               setNotifOpen(false)
             }}
-            className="flex items-center gap-2 rounded-xl border border-wood-light/40 bg-white/70 py-1.5 pe-3 ps-1.5 transition hover:bg-wood-cream"
+            className="flex items-center gap-2 rounded-xl border border-wood-light/40 bg-white/70 p-1.5 transition hover:bg-wood-cream sm:pe-3"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-wood-btn text-xs font-bold text-white">
               {initials(currentUser?.fullName ?? 'U')}
             </div>
-            <div className="text-start">
+            <div className="hidden text-start sm:block">
               <p className="text-xs font-bold leading-none text-wood-dark">{currentUser?.fullName}</p>
               <p className="mt-0.5 text-[10px] text-wood-medium">{currentUser?.role}</p>
             </div>
