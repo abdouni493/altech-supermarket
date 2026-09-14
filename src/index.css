@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Cosmetics palette — violet · fuchsia · pink · lilac with rose-gold accent */
+  --wood-dark: #3b0764;
+  --wood-medium: #9333c4;
+  --wood-warm: #c026d3;
+  --wood-light: #e879f9;
+  --wood-blonde: #f5c2f1;
+  --wood-cream: #faeafb;
+  --wood-white: #fdf6fe;
+  --gold: #c9789a;
+  --gold-light: #f0b6d8;
+  --green-sage: #3f9e84;
+  --terracotta: #e24a6a;
+  --charcoal: #2a1140;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Cairo', system-ui, sans-serif;
+  color: var(--charcoal);
+  background: linear-gradient(135deg, #fdf6fe 0%, #faeafb 60%, #fce7f3 100%);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html[dir='rtl'] body {
+  font-family: 'Cairo', 'Inter', sans-serif;
+}
+
+/* Soft beauty sheen overlay used on dark/brand surfaces */
+.wood-grain {
+  position: relative;
+}
+.wood-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  background-image: radial-gradient(
+      120% 80% at 80% 0%,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0) 55%
+    ),
+    radial-gradient(70% 60% at 12% 100%, rgba(236, 72, 153, 0.28) 0%, rgba(236, 72, 153, 0) 62%),
+    radial-gradient(60% 60% at 95% 90%, rgba(147, 51, 234, 0.22) 0%, rgba(147, 51, 234, 0) 60%);
+  mix-blend-mode: screen;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(232, 121, 249, 0.08);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #e879f9, #c026d3);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c026d3, #7e22ce);
+  background-clip: padding-box;
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .card-wood {
+    background: linear-gradient(145deg, #ffffff 0%, #fdf6fe 100%);
+    box-shadow: 0 4px 20px rgba(59, 7, 100, 0.09);
+    border: 1px solid rgba(232, 121, 249, 0.16);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+    color: #fff;
+  }
+
+  .input-wood {
+    @apply w-full rounded-xl border border-wood-light/40 bg-white/80 px-4 py-2.5 text-sm text-charcoal outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30 placeholder:text-wood-medium/40;
+  }
+
+  .label-wood {
+    @apply mb-1.5 block text-sm font-medium text-wood-medium;
+  }
+
+  .text-display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .text-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Print styles for invoices / reports */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

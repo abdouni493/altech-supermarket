@@ -1,0 +1,25 @@
+{
+  "products": [
+    {
+      "name": "jkkjlk",
+      "description": "oiujioj",
+      "barcode": "9853382061500",
+      "brand": "kjkj",
+      "category": "ijklj",
+      "quantity": 0,
+      "purchasePrice": 0,
+      "salePrice": 0,
+      "minQuantity": 0,
+      "hasExpiration": false,
+      "id": "p-mqwlupdl-0mpdcu",
+      "createdAt": "2026-06-27T16:59:32.985Z"
+    }
+  ],
+  "clients": [],
+  "suppliers": [],
+  "purchases": [],
+  "sales": [],
+  "workers": [],
+  "expenses": [],
+  "settings": null
+}
