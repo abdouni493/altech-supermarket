@@ -103,12 +103,12 @@ export const POSPage = () => {
     setReceived(0)
   }
 
-  const handleNewClient = () => {
+  const handleNewClient = async () => {
     if (!newClient.name.trim()) {
       toast.error(t('required'))
       return
     }
-    const created = addClient({ name: newClient.name, phone: newClient.phone })
+    const created = await addClient({ name: newClient.name, phone: newClient.phone })
     setClient(created)
     setWalkIn(false)
     setShowNewClient(false)

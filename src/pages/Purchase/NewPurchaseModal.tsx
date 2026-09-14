@@ -111,12 +111,12 @@ export const NewPurchaseModal = ({ open, onClose, editing }: NewPurchaseModalPro
 
   const rest = round2(Math.max(0, total - paid))
 
-  const handleNewSupplier = () => {
+  const handleNewSupplier = async () => {
     if (!newSup.name.trim()) {
       toast.error(t('required'))
       return
     }
-    const created = addSupplier({ name: newSup.name, phone: newSup.phone, address: newSup.address })
+    const created = await addSupplier({ name: newSup.name, phone: newSup.phone, address: newSup.address })
     setSupplier(created)
     setSupplierQuery(created.name)
     setShowNewSupplier(false)

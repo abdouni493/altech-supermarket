@@ -91,7 +91,7 @@ export const ProductModal = ({ open, onClose, product, onSaved, presetName }: Pr
 
   const handlePrint = useReactToPrint({ content: () => printRef.current })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     if (product) {
       // Edit: only touch the identity fields, keep pricing/alerts/expiry intact.
       const patch = {
@@ -108,7 +108,7 @@ export const ProductModal = ({ open, onClose, product, onSaved, presetName }: Pr
     } else {
       // New product: pricing, alert threshold and expiration start empty and are
       // filled in automatically when the first purchase of this product is saved.
-      const created = addProduct({
+      const created = await addProduct({
         name: data.name,
         description: data.description ?? '',
         barcode: data.barcode ?? '',

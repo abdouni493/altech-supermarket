@@ -27,7 +27,7 @@ interface WorkerState {
 
 export const useWorkerStore = create<WorkerState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       workers: INITIAL_WORKERS,
       roles: INITIAL_ROLES,
       loadFromServer: async () => {
